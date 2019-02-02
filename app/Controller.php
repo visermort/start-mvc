@@ -97,9 +97,10 @@ class Controller
             App::setMeta('keywords', $this->actionRules[$this->actionName]['keywords']);
         }
         //params: count must be less or same what these are set in rules
+        //params: count must be the same what these are set in rules - for a while
         $paramsEnableds = isset($this->actionRules[$this->actionName]['params']) ?
-            ($this->actionRules[$this->actionName]['params']) : 0;
-        if (count($this->actionParams) > count($paramsEnableds)) {
+            ($this->actionRules[$this->actionName]['params']) : [];
+        if (count($this->actionParams) != count($paramsEnableds)) {
             $this->actionNotfound();
         }
         if (!empty($this->actionParams)) {

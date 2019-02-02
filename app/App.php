@@ -73,7 +73,7 @@ class App
             $controllerFile = ucfirst($pathArray[1]) . 'Controller.php';
 
             if (!file_exists(self::$request['root_path'] . '/app/controllers/' . $controllerFile) ||
-                (isset($pathArray[2]) && $pathArray[2] == 'index')) {
+                (isset($pathArray[2]) && $pathArray[2] == 'index') || $pathArray[1] == 'site') {
                 //there is not a controller file or action name == index
                 if (App::getConfig('app.debug')) {
                     echo 'There is not a controller file "'.$controllerFile.'" or action name == index';

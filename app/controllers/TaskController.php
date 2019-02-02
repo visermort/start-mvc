@@ -34,7 +34,7 @@ class TaskController extends Controller
             ],
             'h1' => 'Task <small>update</small>',
             'params' => [
-                ['rule' => 'integer'],
+                ['rule' => 'integer', 'required' => true],
             ],
             'access' => 'login',
         ],
@@ -124,6 +124,9 @@ class TaskController extends Controller
 
 
         $task = Task::find($id);
+        if (!$task) {
+            return $this->actionNotfound();
+        }
         return  $this->render('task/update', ['task' => $task]);
     }
 
