@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en" class="no-js">
+
+{{ include layouts/parts/head }}
+
+<body>
+
+    {{ include layouts/parts/nav }}
+
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <!-- Page Heading/Breadcrumbs -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="page-header">{{ h1 }}
+                    <!--<small>Subheading</small>-->
+                </h1>
+                {{ breadcrumbs }}
+            </div>
+        </div>
+        <!-- /.row -->
+
+        {{ content }}
+
+        <hr>
+
+        <!-- Footer -->
+        {{ includelayouts/parts/footer}}
+
+
+    </div>
+    <!-- /.container -->
+
+    <!-- jQuery -->
+    <script src="/js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="/js/bootstrap.min.js"></script>
+
+
+</body>
+
+</html>

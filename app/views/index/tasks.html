@@ -1,0 +1,44 @@
+<div class="row">
+    <div class="col-md-12">
+
+
+        <div class="panel-body datagrid">
+
+            <table id="tt" class="easyui-datagrid" style="width:100%;height:auto;">
+                <thead>
+                <tr class="head">
+                    <th class="table-sorting" nowrap><?php $app=app\App::getComponent('help'); echo $app->sortBy('id', 'ID');?></th>
+                    <th class="table-sorting" nowrap><?php $app=app\App::getComponent('help'); echo $app->sortBy('email', 'Email');?></th>
+                    <th class="table-sorting" nowrap><?php $app=app\App::getComponent('help'); echo $app->sortBy('first_name', 'Name');?></th>
+                    <th class="table-sorting" nowrap><?php $app=app\App::getComponent('help'); echo $app->sortBy('status', 'Status');?></th>
+                    <?php if (!app\App::isGuest()) { ?>
+                        <th class="table-sorting" nowrap></th>
+                    <?php } ?>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($tasks as $task) { ?>
+                <tr>
+                    <td><?=$task->id;?></td>
+                    <td><?=$task->email;?></td>
+                    <td><?=$task->first_name;?> <?=$task->last_name;?></td>
+                    <td><?php $app=app\App::getComponent('help'); echo $app->status($task->status);?></td>
+                    <?php if (!app\App::isGuest()) { ?>
+                        <td><a href="/task/update/<?=$task->id;?>"><i class="fa fa-pencil-square-o" aria-hidden="true" ></i></a></td>
+                    <?php } ?>
+                </tr>
+                <?php } ?>
+
+
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            <?php $app=app\App::getComponent('help'); echo $app->pagination($pagination); ?>
+        </div>
+
+    </div>
+</div>
+
+
+

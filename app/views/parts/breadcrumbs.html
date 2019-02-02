@@ -1,0 +1,11 @@
+<ol class="breadcrumb">
+    <?php if ($breadcrumbs) { ?>
+        <?php foreach ($breadcrumbs as $key => $crumb) { ?>
+            <?php if (($key == count($breadcrumbs) - 1) || empty($crumb['url'])) : ?>
+                <li class="active"><?=$crumb['title'];?></li>
+            <?php else : ?>
+                <li><a href="<?=$crumb['url'];?>"><?=$crumb['title'];?></a></li>
+            <?php endif; ?>
+        <?php } ?>
+    <?php } ?>
+</ol>

@@ -1,0 +1,21 @@
+{
+    "name": "oxygenn/start-mvc",
+    "authors": [
+        {
+            "name": "andrei",
+            "email": "oxygenn@list.ru"
+        }
+    ],
+    "require": {
+        "illuminate/database": "^5.5",
+        "illuminate/events": "^5.5",
+        "cartalyst/sentinel": "^2.0",
+        "symfony/http-foundation": "^3.4",
+        "robmorgan/phinx": "^0.10.6",
+        "vlucas/valitron": "^1.4"
+    },
+    "require-dev": {
+        "kint-php/kint": "^3.1"
+    }
+
+}
