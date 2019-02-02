@@ -124,7 +124,6 @@ class TaskController extends Controller
 
 
         $task = Task::find($id);
-       // d($task, $task->text, $task->user);exit;
         return  $this->render('task/update', ['task' => $task]);
     }
 

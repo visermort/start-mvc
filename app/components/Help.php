@@ -22,7 +22,7 @@ class Help
 
     public function pagination($pagination)
     {
-        if (isset($pagination['single']) && $pagination['single'] && $pagination['pages'] == 1) {
+        if ((isset($pagination['single']) && $pagination['single']) || $pagination['pages'] == 1) {
             return '';
         }
         $path = App::getRequest('path');

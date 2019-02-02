@@ -6,8 +6,6 @@ use app\Controller;
 use app\App;
 use Cartalyst\Sentinel\Native\Facades\Sentinel;
 
-
-
 /**
  * Class SiteController
  * @package app\controlers

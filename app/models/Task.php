@@ -29,6 +29,11 @@ class Task extends Model
         return $this->belongsTo('app\models\User');
     }
 
+    /**
+     * make new task. Find user by email. Make new user if hi is not exists
+     * @param $data
+     * @return Task
+     */
     public static function createNew($data)
     {
         $user = User::where('email', $data['email'])->first();

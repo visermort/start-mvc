@@ -48,11 +48,6 @@ class App
         $this->makeRequest();
         $this->makeConfigs();
         $this->makeComponents();
-
-//        spl_autoload_register(function ($className) {
-//            $className = substr($className, 4);
-//            include $className . '.php';
-//        });
     }
 
     /**

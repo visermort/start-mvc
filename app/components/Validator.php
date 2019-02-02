@@ -17,10 +17,6 @@ class Validator
      */
     public function validate($data, $rules)
     {
-        //foreach ($data as &$item) {
-
-        //}
-
         $validator = new Valitron($data);
         foreach ($rules as $rule) {
             $validator->rule($rule[0], $rule[1]);
