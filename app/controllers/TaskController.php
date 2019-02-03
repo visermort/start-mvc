@@ -54,6 +54,9 @@ class TaskController extends Controller
         $db = App::getComponent('db');
     }
 
+    /*
+     * page is not exists
+     */
     public function actionIndex()
     {
         $this->redirect('/');
@@ -95,6 +98,10 @@ class TaskController extends Controller
         return $this->render('task/create');
     }
 
+    /**
+     * update task
+     * @return stringp
+     */
     public function actionUpdate()
     {
         $id = $this->actionParams[0];
@@ -115,8 +122,8 @@ class TaskController extends Controller
                     //redirect with flash data
                 $this->redirect('/task/result', 302, [
                     'success' => $result,
-                    'text' => $result ? 'Task was created updated. obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugia' :
-                        'There was error updating task. obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugia'
+                    'text' => $result ? 'Task was updated. obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugia' :
+                        'There was an error updating task. obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugia'
                 ]);
             } else {
                 //validate fails
@@ -140,11 +147,14 @@ class TaskController extends Controller
     public function actionResult()
     {
         $session = App::getComponent('session');
-        $success =  $session && $session->get('success') ? 1 : 0;
-        $title = $success ? 'Successfull' : 'Error';
-        $className = $success ? 'success' : 'error';
-        $text = $session ? $session->get('text') : '';
-        return $this->render('results/result', ['className' => $className ,'title' => $title, 'text' => $text]);
+        $success = $session->get('success');
+        if ($success !== null) {
+            $title = $success ? 'Successfull' : 'Error';
+            $className = $success ? 'success' : 'error';
+            $text = $session->get('text');
+            return $this->render('results/result', ['className' => $className, 'title' => $title, 'text' => $text]);
+        }
+        $this->redirect('/');
     }
 
 }

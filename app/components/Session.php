@@ -35,9 +35,9 @@ class Session
     public function get($key)
     {
         if (!isset($_SESSION[$key])) {
-            return '';
+            return null;
         }
-        $value = isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+        $value = $_SESSION[$key];
         if (isset($_SESSION[$key . $this->flashPrefix])) {
             $this->deleteKey($key);
             $this->deleteKey($key . $this->flashPrefix);
