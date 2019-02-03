@@ -105,6 +105,10 @@ class SiteController extends Controller
                         }
                     }
                 }
+                $validateResult = [
+                    'password' => 'You user name or password are invalid',
+                    'name' => 'You user name or password are invalid',
+                ];
             }
             return $this->render('account/login', ['old' => $postData, 'errors' => $validateResult]);
         }

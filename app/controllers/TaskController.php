@@ -34,7 +34,7 @@ class TaskController extends Controller
             ],
             'h1' => 'Task <small>update</small>',
             'params' => [
-                ['rule' => 'integer', 'required' => true],
+                ['rule' => ['integer'=>[['param']]], 'required' => true],
             ],
             'access' => 'login',
         ],
@@ -71,6 +71,9 @@ class TaskController extends Controller
             // validate and clean post data
             $postData = App::getRequest('post');
             $validator = App::getComponent('validator');
+            if (isset($postData['email'])) {
+                $postData['email'] = strtolower($postData['email']);
+            }
             $postData = $validator->clean($postData);
             $validateResult = $validator->validate($postData, Task::$rules);
             if ($validateResult === true) {
@@ -85,7 +88,7 @@ class TaskController extends Controller
                 ]);
             } else {
                 //validate fails
-                return $this->render('tasks/create', ['old' => $postData, 'errors' => $validateResult]);
+                return $this->render('task/create', ['old' => $postData, 'errors' => $validateResult]);
             }
         }
         //start

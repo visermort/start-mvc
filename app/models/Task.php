@@ -14,11 +14,12 @@ class Task extends Model
     protected $primaryKey = 'id';
 
     public static $rules = [
-        ['required', ['first_name', 'email', 'text']],
-        ['email', 'email'],
+        'required'=> [['first_name', 'email', 'text']],
+        'email' => [['email']],
+        'regex' => [['email', '/^(?!(admin@)).*$/']]//to protect email like admin@someemail.com
     ];
     public static $rulesUpdate = [
-        ['required', ['text']],
+        'required'=> [['text']],
     ];
 
     /**
@@ -40,7 +41,7 @@ class Task extends Model
         if (!$user) {
             //create new user
             $user = new User();
-            $user->email = $data['email'];
+            $user->email = strtolower($data['email']);
             $user->first_name = $data['first_name'];
             $user->last_name = $data['last_name'];
             $user->password = md5(time());//random password

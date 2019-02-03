@@ -10,7 +10,9 @@ class User extends Model
     protected $primaryKey = 'id';
 
     public static $loginRules = [
-        ['required', ['name', 'password']],
+        'required' => [
+            ['name', 'password']
+        ],
     ];
 
 }

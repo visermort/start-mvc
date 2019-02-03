@@ -108,7 +108,7 @@ class Controller
                 if (isset($paramsEnableds[$key]['rule'])) {
                     //if rule is set - validate
                     $validator = App::getComponent('validator');
-                    if ($validator->validate(['name' => $param], [[$paramsEnableds[$key]['rule'], ['name']]]) !== true) {
+                    if ($validator->validate(['param' => $param], $paramsEnableds[$key]['rule']) !== true) {
                         $this->actionNotfound();
                     }
                 }
