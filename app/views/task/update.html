@@ -15,8 +15,8 @@
                     <label for="status">Status:</label>
                     <select class="form-control" name="status" id="status">
                         <option value="">==Select status==</option>
-                        <option value="0" <?php echo ($task->status != 1 ? 'checked':'') ;?> >In process</option>
-                        <option value="1" <?php echo ($task->status ? 'checked':'') ;?> >Completed</option>
+                        <option value="0" <?php echo ($task->status != 1 ? 'selected':'') ;?> >In process</option>
+                        <option value="1" <?php echo ($task->status ? 'selected':'') ;?> >Completed</option>
                     </select>
                     <p class="help-block"><?php if (isset($errors['text'])){ echo $errors['text']; } ?></p>
                 </div>

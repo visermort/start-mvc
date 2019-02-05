@@ -2,13 +2,13 @@
 
 namespace app;
 
-
 /**
  * Class App
  * @package app
  */
 class App
 {
+    private static $instance;
     /**
      * @var configs for app
      */
@@ -38,65 +38,98 @@ class App
      */
     protected $controller;
 
-
-
     /**
      * App constructor.
      */
-    public function __construct()
+    private function __construct()
     {
-        $this->makeRequest();
-        $this->makeConfigs();
-        $this->makeComponents();
     }
+    private function __clone()
+    {
+    }
+    private function __wakeup()
+    {
+    }
+
+    /**run application
+     * @return App
+     */
+    public static function init()
+    {
+        if (self::$instance == null) {
+            self::$instance = new self();
+        }
+        self::$instance->makeRequest();
+        self::$instance->makeConfigs();
+        self::$instance->makeComponents();
+
+        self::getComponent('auth');
+
+        self::$instance->run();
+        return self::$instance;
+    }
+
 
     /**
      * parse url path and run controller/action($params)
      * run application
      */
-    public function run()
+    private function run()
     {
-        $pathArray = explode('/', self::getRequest('path'));
-        if (empty($pathArray[1])) {
-            //start page
-            $this->controllerName = 'app\controllers\SiteController';
-            $this->actionName = 'actionIndex';
-        } elseif (!empty($pathArray[1]) && $pathArray[1] != 'index' &&
-            method_exists('app\controllers\SiteController', 'action' . $pathArray[1])) {
-            //action of SiteController
-            $this->controllerName = 'app\controllers\SiteController';
-            $this->actionName = 'action' . $pathArray[1];
-            $this->actionParams = array_values(array_slice($pathArray, 2));
-        } else {
-            //find action of other controller
-            $this->controllerName = !empty($pathArray[1]) ? 'app\controllers\\' . ucfirst($pathArray[1]) . 'Controller' : '';
-            $controllerFile = ucfirst($pathArray[1]) . 'Controller.php';
+        $dispatcher = $this->getDispatcher(self::getConfigSection('routes'));
 
-            if (!file_exists(self::$request['root_path'] . '/app/controllers/' . $controllerFile) ||
-                (isset($pathArray[2]) && $pathArray[2] == 'index') || $pathArray[1] == 'site') {
-                //there is not a controller file or action name == index
-                if (App::getConfig('app.debug')) {
-                    echo 'There is not a controller file "'.$controllerFile.'" or action name == index';
-                }
+        $routeInfo = $dispatcher->dispatch(self::getRequest('method'), self::getRequest('path'));
+
+        switch ($routeInfo[0]) {
+            case \FastRoute\Dispatcher::NOT_FOUND:
                 $this->errorNotFound();
-            }
-            $this->actionName = !empty($pathArray[2]) ? 'action' . ucfirst($pathArray[2]) : false;
-            if ($this->actionName && method_exists($this->controllerName, $this->actionName)) {
-                // route controler/action
-                $this->actionParams = array_values(array_slice($pathArray, 3));
-            } else if ($this->actionName) {
-                //there is not such action
-                if (App::getConfig('app.debug')) {
-                    echo 'There is not a class "'.$this->controllerName.'" or an action "'.$this->actionName;
-                }
-                $this->errorNotFound();
-            } else {
-                // route /countroller
+                break;
+            case \FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
+                $this->controllerName = 'app\controllers\SiteController';
                 $this->actionName = 'actionIndex';
                 $this->actionParams = [];
-            }
+                break;
+            case \FastRoute\Dispatcher::FOUND:
+                $this->actionParams = $routeInfo[2];
+                $handler = explode('.', $routeInfo[1]);
+                $this->controllerName = 'app\controllers\\' . ucfirst($handler[0]) . 'Controller';
+                $controllerFile = ucfirst($handler[0]) . 'Controller.php';
+                $this->actionName = 'action' . ucfirst($handler[1]);
+                if (!file_exists(self::$request['root_path'] . '/app/controllers/' . $controllerFile) ||
+                    !method_exists($this->controllerName, $this->actionName)) {
+                    //there is not a controller file or action name == index
+                    if (App::getConfig('app.debug')) {
+                        echo 'There is not a controller file "' . $controllerFile . '" or action name == index';
+                    }
+                    $this->errorNotFound();
+                }
+                if (isset($handler[2])) {
+                    //part of hangler for checking permissions
+                    switch ($handler[2]) {
+                        case 'admin':
+                            if (App::isGuest()) {
+                                $this->redirect(App::getConfig('app.login_url'));
+                            }
+                            break;
+                    }
+                }
+                break;
         }
         $this->startAction();
+    }
+
+    /**
+     * @param $routesConfig
+     * @return \FastRoute\Dispatcher
+     */
+    private function getDispatcher($routesConfig)
+    {
+        $dispatcher = \FastRoute\simpleDispatcher(function (\FastRoute\RouteCollector $route) use ($routesConfig) {
+            foreach ($routesConfig as $routeGroupItem) {
+                $route->addRoute($routeGroupItem[0], $routeGroupItem[1], $routeGroupItem[2]);
+            }
+        });
+        return $dispatcher;
     }
 
     /**
@@ -191,7 +224,6 @@ class App
         $actionName = strtolower(substr($this->actionName, 6));
         $this->controller = new $this->controllerName($actionName, $this->actionParams);
         if ($this->controller) {
-            $this->controller->beforeAction();
             $method = $this->actionName;
             echo $this->controller->$method();
             exit;
@@ -219,8 +251,9 @@ class App
         );
         self::$request['url'] = self::$request['server']['REQUEST_URI'];
         $path = explode('?', self::$request['url']);
-        self::$request['path'] = $path[0];
+        self::$request['path'] = rawurldecode($path[0]);
         self::$request['isPost'] = !empty(self::$request['post']);
+        self::$request['method'] = self::$request['server']['REQUEST_METHOD'];
     }
 
     /**
@@ -268,6 +301,16 @@ class App
         $this->actionName = 'actionNotfound';
         $this->controller = new Controller();
         $this->controller->actionNotfound();
+    }
+
+    /**
+     * @param $url
+     */
+    private function redirect($url)
+    {
+        $this->controllerName = 'app\Controller';
+        $this->controller = new Controller();
+        $this->controller->redirect($url);
     }
 
 }

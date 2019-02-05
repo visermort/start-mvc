@@ -33,9 +33,6 @@ class TaskController extends Controller
                 'url' => '/task/update'
             ],
             'h1' => 'Task <small>update</small>',
-            'params' => [
-                ['rule' => ['integer'=>[['param']]], 'required' => true],
-            ],
             'access' => 'login',
         ],
         'result' => [
@@ -51,7 +48,7 @@ class TaskController extends Controller
     public function beforeAction()
     {
         parent::beforeAction();
-        $db = App::getComponent('db');
+        App::getComponent('db');
     }
 
     /*
@@ -69,7 +66,7 @@ class TaskController extends Controller
      */
     public function actionCreate()
     {
-        if (App::getRequest('isPost')) {
+        if (App::getRequest('method') == 'POST') {
             //if post
             // validate and clean post data
             $postData = App::getRequest('post');
@@ -104,8 +101,8 @@ class TaskController extends Controller
      */
     public function actionUpdate()
     {
-        $id = $this->actionParams[0];
-        if (App::getRequest('isPost')) {
+        $id = $this->actionParams['id'];
+        if (App::getRequest('method') == 'POST') {
             //if post
             // validate and clean post data
             $postData = App::getRequest('post');

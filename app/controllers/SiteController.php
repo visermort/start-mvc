@@ -36,7 +36,7 @@ class SiteController extends Controller
     public function beforeAction()
     {
         parent::beforeAction();
-        $db = App::getComponent('db');
+        App::getComponent('db');
     }
 
     /**
@@ -76,7 +76,7 @@ class SiteController extends Controller
         if ($user) {
             $this->redirect('/');
         }
-        if (App::getRequest('isPost')) {
+        if (App::getRequest('method') == 'POST') {
             //if post
             // validate and clean post data
             $postData = App::getRequest('post');

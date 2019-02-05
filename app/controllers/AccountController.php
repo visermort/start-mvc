@@ -28,15 +28,12 @@ class AccountController extends Controller
             ],
             'h1' => 'Account <small>logout</small>',
         ],
-        'params' => [
-            [],
-        ],
     ];
 
     public function beforeAction()
     {
         parent::beforeAction();
-        $db = App::getComponent('db');
+        App::getComponent('db');
     }
 
     /**

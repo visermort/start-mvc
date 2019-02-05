@@ -2,7 +2,6 @@
 
 namespace app;
 
-use Cartalyst\Sentinel\Native\Facades\Sentinel;
 
 /** base controller
  * Class Controller
@@ -43,17 +42,7 @@ class Controller
     {
         $this->actionName = $action;
         $this->actionParams = $actionParams;
-        try {
-            $db = App::getComponent('db');
-            $user = Sentinel::check();
-            if ($user) {
-                App::setUser($user);
-            }
-        } catch (\Exception $e) {
-            if (App::getConfig('app.debug')) {
-                echo $e->getMessage();
-            }
-        }
+        $this->beforeAction();
     }
 
     /**
@@ -96,36 +85,6 @@ class Controller
         if (isset($this->actionRules[$this->actionName]['keywords'])) {
             App::setMeta('keywords', $this->actionRules[$this->actionName]['keywords']);
         }
-        //params: count must be less or same what these are set in rules
-        //params: count must be the same what these are set in rules - for a while
-        $paramsEnableds = isset($this->actionRules[$this->actionName]['params']) ?
-            ($this->actionRules[$this->actionName]['params']) : [];
-        if (count($this->actionParams) != count($paramsEnableds)) {
-            $this->actionNotfound();
-        }
-        if (!empty($this->actionParams)) {
-            foreach ($this->actionParams as $key => $param) {
-                if (isset($paramsEnableds[$key]['rule'])) {
-                    //if rule is set - validate
-                    $validator = App::getComponent('validator');
-                    if ($validator->validate(['param' => $param], $paramsEnableds[$key]['rule']) !== true) {
-                        $this->actionNotfound();
-                    }
-                }
-            }
-        }
-        //check access to action
-        if (isset($this->actionRules[$this->actionName]['access'])) {
-            $access = $this->actionRules[$this->actionName]['access'];
-            switch ($access) {
-                case ('login'):
-                    if (App::isGuest()) {
-                        $this->redirect(App::getConfig('app.login_url'));
-                    }
-                    break;
-            }
-        }
-
     }
     /**
      * @param $tempalte
