@@ -15,7 +15,17 @@ class Controller
 
     protected $h1 = 'H1 for page';
 
-    protected $actionRules;
+    protected $actionRules = [
+        'notaccess' => [
+            'breadcrumbs'=>[
+                'title'=>'405',
+                'url' => ''
+            ],
+            'h1' => '405 <small>not access to page</small>',
+            'title' => 'Site title. 405 Not access',
+        ],
+
+    ];
 
     protected $actionRulesNotFount = [
         'notfound' => [
@@ -25,8 +35,7 @@ class Controller
             ],
             'h1' => '404 <small>Page Not Found</small>',
             'title' => 'Site title. 404 Not Found',
-        ]
-
+        ],
     ];
 
     protected $layout = 'layouts/main';
@@ -126,6 +135,14 @@ class Controller
         header("Status: 404 Not Found");
 
         echo $this->render('404');
+        exit;
+    }
+
+    public function actionNotaccess()
+    {
+        header("HTTP/1.0 405 Method Not Allowed");
+        header("Status: 405 Method Not Allowed");
+        echo $this->render('405');
         exit;
     }
 

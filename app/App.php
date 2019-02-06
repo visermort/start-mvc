@@ -85,9 +85,7 @@ class App
                 $this->errorNotFound();
                 break;
             case \FastRoute\Dispatcher::METHOD_NOT_ALLOWED:
-                $this->controllerName = 'app\controllers\SiteController';
-                $this->actionName = 'actionIndex';
-                $this->actionParams = [];
+                $this->error405();
                 break;
             case \FastRoute\Dispatcher::FOUND:
                 $this->actionParams = $routeInfo[2];
@@ -114,9 +112,7 @@ class App
                     $checkUser = $auth->hasAccessTo($email, $handler[2]);
                     if (!$checkUser) {
                         //does not have a permission
-                        $session = self::getComponent('session');
-                        $session->flash('notaccess', 1);
-                        $this->redirect(App::getConfig('app.not_access_url'));
+                        $this->error405();
                     }
                 }
                 break;
@@ -307,6 +303,16 @@ class App
         $this->actionName = 'actionNotfound';
         $this->controller = new Controller();
         $this->controller->actionNotfound();
+    }
+    /**
+     * if access denyed
+     */
+    private function error405()
+    {
+        $this->controllerName = 'app\Controller';
+        $this->actionName = 'actionNotaccess';
+        $this->controller = new Controller('notaccess');
+        $this->controller->actionNotaccess();
     }
 
     /**
