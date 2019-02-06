@@ -4,6 +4,7 @@ return [
     ['GET', '/', 'site.index'],
     ['GET', '/account/logout', 'account.logout'],
     ['GET', '/task/result', 'task.result'],
+    ['GET', '/account', 'account.index'],
 
     [['GET', 'POST'], '/login', 'site.login'],
     [['GET', 'POST'], '/task/create', 'task.create'],

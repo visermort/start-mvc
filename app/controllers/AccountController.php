@@ -46,7 +46,7 @@ class AccountController extends Controller
         return $this->render('results/result', [
             'title'=> 'Under constuction',
             'text'=> 'Sorry. This page is under consruction! Please, visit it soon :)',
-            'className' => 'error',
+            'className' => 'success',
         ]);
     }
     /**
