@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\components\Paginate;
 use app\Controller;
 use app\App;
 use app\models\User;
@@ -84,7 +85,7 @@ class AccountController extends Controller
             $validateResult = $validator->validate($postData, User::$loginRules);
             if ($validateResult === true) {
                 //try to find user by part of email
-                $user = User::where('email', 'like', $postData['name'].'@%')->first();
+                $user = User::where('email', 'like', trim($postData['name']).'@%')->first();
                 if ($user) {
                     //try to login
                     $credentials = [
@@ -94,14 +95,14 @@ class AccountController extends Controller
                     $auth = App::getComponent('auth');
                     $authUser = $auth->authenticate($credentials);
                     if ($authUser) {
-                        $checkUser = $auth->hasAccessTo($authUser['email'], 'admin');
-                        if ($checkUser) {
+                        //$checkUser = $auth->hasAccessTo($authUser['email'], 'admin');
+                        //if ($checkUser) {
                             //checked  - login
-                            $login = $auth->login($authUser);
-                            if ($login) {
-                                $this->redirect(App::getConfig('app.account_start_page'));
-                            }
+                        $login = $auth->login($authUser);
+                        if ($login) {
+                            $this->redirect(App::getConfig('app.account_start_page'));
                         }
+                        //}
                     }
                 }
                 $validateResult = [

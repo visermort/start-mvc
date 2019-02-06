@@ -9,4 +9,5 @@ return [
     'admin_email' => 'admin@admin.ua',
     'account_start_page' => '/',
     'login_url' => '/login',
+    'not_access_url' => '/error503'
 ];
