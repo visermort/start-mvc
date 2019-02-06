@@ -16,9 +16,8 @@ class TaskController extends Controller
 
     protected $actionRules = [
         'index' => [
-            'breadcrumbs'=>[
-                'title' => 'Tasks',
-            ],
+            'breadcrumbs'=>false,
+            'h1' => 'Tasks',
         ],
         'create' => [
             'breadcrumbs'=>[
@@ -45,18 +44,31 @@ class TaskController extends Controller
 
     ];
 
-    public function beforeAction()
-    {
-        parent::beforeAction();
-        App::getComponent('db');
-    }
-
-    /*
-     * page is not exists
+    /**
+     * @return string
      */
     public function actionIndex()
     {
-        $this->redirect('/');
+        $this->layout = 'layouts/index';
+
+        $sortBy = App::getRequest('get', 'sort');
+        $page = App::getRequest('get', 'page');
+        $direction = App::getRequest('get', 'order');
+
+        $database = Task::select('tasks.*', 'users.first_name', 'users.last_name', 'users.email')
+            ->leftJoin('users', 'users.id', '=', 'tasks.user_id');
+        if ($sortBy) {
+            $database = $database->orderBy($sortBy, $direction);
+        }
+        //app component
+        $pagination = App::getComponent('paginate');
+        //component init
+        $pagination->init($database, ['page' => $page]);
+        //component data and pagination data
+        $tasks = $pagination->data();
+        $pagination = $pagination->pagination();
+
+        return $this->render('index/tasks', ['tasks' => $tasks, 'pagination' => $pagination]);
     }
 
     /**

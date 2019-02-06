@@ -26,5 +26,144 @@ class Auth
             }
         }
     }
+    /**
+     * activatioin key
+     * @param $userId
+     * @return mixed
+     */
+    public function getActivation($email)
+    {
+        $user = Sentinel::findByCredentials(['email' => $email]);
+        $activationRepository = Sentinel::getActivationRepository();
+        $activation = $activationRepository->create($user);
+        return $activation;
+    }
+
+    /**
+     * complete activation
+     * @param $email
+     * @param $activationCode
+     * @return mixed
+     */
+    public function activate($email, $activationCode)
+    {
+        $user = Sentinel::findByCredentials(['email' => $email]);
+        $activationRepository = Sentinel::getActivationRepository();
+        if ($user) {
+            $activation = $activationRepository->complete($user, $activationCode);
+            return $activation;
+        }
+    }
+
+    /**
+     * check activation
+     * @param $email
+     * @return mixed
+     */
+    public function checkActivation($email)
+    {
+        $user = Sentinel::findByCredentials(['email' => $email]);
+        $activationRepository = Sentinel::getActivationRepository();
+        if ($user) {
+            $activation = $activationRepository->exists($user);
+            return $activation;
+        }
+    }
+
+    /**
+     * @param $credentials
+     * @return mixed
+     */
+    public function register($credentials)
+    {
+        $user = Sentinel::authenticate(['email' => $credentials['email']]);
+        if ($user) {
+            return [
+                'result' => 'false',
+                'user' => $user,
+                'message' => 'User with this email allredy exists',
+            ];
+        }
+        $user =  Sentinel::register($credentials);
+        return [
+            'result' => $user != false,
+            'user' => $user,
+            'message' => '',
+        ];
+    }
+
+    /**
+     * authenticate
+     * @param $credentials
+     * @return mixed
+     */
+    public function authenticate($credentials)
+    {
+        return Sentinel::authenticate($credentials);
+    }
+
+    /**
+     * login and remember
+     * @param $user
+     * @return mixed
+     */
+    public function login($user)
+    {
+        return Sentinel::loginAndRemember($user);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function logout()
+    {
+        return Sentinel::logout();
+    }
+
+    /**
+     * set permission
+     * @param $email
+     * @param $role
+     * @param bool $value
+     * @return array
+     */
+    public function setUserPermision($email, $permission, $value = true)
+    {
+        $user = Sentinel::findByCredentials(['email' => $email]);
+        $permissions = [];
+        foreach ($user->permissions as $key => $val) {
+            $permissions[$key] = $val;
+        }
+        $permissions[$permission] = $value ? true : false;
+        $user->permissions = $permissions;
+        if ($user->save()) {
+            return $user->permissions;
+        }
+    }
+
+    /** revoke all permissions
+     * @param $email
+     * @return null
+     */
+    public function revokeUserPermisions($email)
+    {
+        $user = Sentinel::findByCredentials(['email' => $email]);
+        $user->permissions = [];
+        if ($user->save()) {
+            return $user->permissions;
+        }
+    }
+
+    /**
+     * check permission
+     * @param $email
+     * @param $permission
+     * @return mixed
+     */
+    public function hasAccessTo($email, $permission)
+    {
+        $user = Sentinel::findByCredentials(['email' => $email]);
+        return $user->hasAccess($permission);
+    }
 
 }

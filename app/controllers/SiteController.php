@@ -7,6 +7,7 @@ use app\App;
 use app\models\Task;
 use app\models\User;
 use Cartalyst\Sentinel\Native\Facades\Sentinel;
+use Cartalyst\Sentinel\Activations\EloquentActivation;
 
 /**
  * Class SiteController
@@ -16,104 +17,29 @@ class SiteController extends Controller
 {
 
     protected $actionRules = [
-        'index' => [
-            'breadcrumbs'=>false,
-            'h1' => 'Tasks',
-        ],
-        'login' => [
+        'notaccess' => [
             'breadcrumbs'=>[
-                'title'=>'Login',
-                'url' => '/login'
+                'title'=>'503',
+                'url' => '/error503'
             ],
-            'h1' => 'Login',
-            'title' => 'title for index/login',
-            'description' => 'desct for index/login',
-            'keywords' => 'kw for index login',
-        ]
+            'h1' => '503 <small>not access to aciton</small>',
+        ],
+
+
     ];
 
 
-    public function beforeAction()
+    public function actionNotaccess()
     {
-        parent::beforeAction();
-        App::getComponent('db');
-    }
-
-    /**
-     * @return string
-     */
-    public function actionIndex()
-    {
-        $this->layout = 'layouts/index';
-
-        $sortBy = App::getRequest('get', 'sort');
-        $page = App::getRequest('get', 'page');
-        $direction = App::getRequest('get', 'order');
-
-        $database = Task::select('tasks.*', 'users.first_name', 'users.last_name', 'users.email')
-            ->leftJoin('users', 'users.id', '=', 'tasks.user_id');
-        if ($sortBy) {
-            $database = $database->orderBy($sortBy, $direction);
+        $session = App::getComponent('session');
+        $message = $session->get('notaccess');
+        if ($message !== null) {
+            $title = 'Error';
+            $className = 'error';
+            $text = 'Sorry! You do not have access to this action. Call our admin to get permission';
+            return $this->render('results/result', ['className' => $className, 'title' => $title, 'text' => $text]);
         }
-        //app component
-        $pagination = App::getComponent('paginate');
-        //component init
-        $pagination->init($database, ['page' => $page]);
-        //component data and pagination data
-        $tasks = $pagination->data();
-        $pagination = $pagination->pagination();
-
-        return $this->render('index/tasks', ['tasks' => $tasks, 'pagination' => $pagination]);
-    }
-
-    /**
-     * @param $params
-     * @return string
-     */
-    public function actionLogin()
-    {
-        $user = App::getUser();
-        if ($user) {
-            $this->redirect('/');
-        }
-        if (App::getRequest('method') == 'POST') {
-            //if post
-            // validate and clean post data
-            $postData = App::getRequest('post');
-            $validator = App::getComponent('validator');
-            $postData = $validator->clean($postData);
-            $validateResult = $validator->validate($postData, User::$loginRules);
-            if ($validateResult === true) {
-                //try to find user by part of email
-                $user = User::where('email', 'like', $postData['name'].'@%')->first();
-                if ($user) {
-                    //try to login
-                    $credentials = [
-                        'email' => $user->email,
-                        'password' => $postData['password'],
-                    ];
-                    $response = Sentinel::authenticate($credentials);
-                    if ($response) {
-                        $email = $response['email'];
-                        //check by email now  - we can check by permissions late
-                        if ($email == App::getConfig('app.admin_email')) {
-                            //checked  - login
-                            $login = Sentinel::loginAndRemember($response);
-                            if ($login) {
-                                $this->redirect(App::getConfig('app.account_start_page'));
-                            }
-                        }
-                    }
-                }
-                $validateResult = [
-                    'password' => 'You user name or password are invalid',
-                    'name' => 'You user name or password are invalid',
-                ];
-            }
-            return $this->render('account/login', ['old' => $postData, 'errors' => $validateResult]);
-        }
-        //start
-        return $this->render('account/login');
+        $this->redirect('/');
     }
 
 }

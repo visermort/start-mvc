@@ -105,12 +105,18 @@ class App
                 }
                 if (isset($handler[2])) {
                     //part of hangler for checking permissions
-                    switch ($handler[2]) {
-                        case 'admin':
-                            if (App::isGuest()) {
-                                $this->redirect(App::getConfig('app.login_url'));
-                            }
-                            break;
+                    if (App::isGuest()) {
+                        //not logged
+                        $this->redirect(App::getConfig('app.login_url'));
+                    }
+                    $auth = self::getComponent('auth');
+                    $email = self::getUser()->email;
+                    $checkUser = $auth->hasAccessTo($email, $handler[2]);
+                    if (!$checkUser) {
+                        //does not have a permission
+                        $session = self::getComponent('session');
+                        $session->flash('notaccess', 1);
+                        $this->redirect(App::getConfig('app.not_access_url'));
                     }
                 }
                 break;
