@@ -22,11 +22,11 @@ class View
     public function renderPage($template, $params)
     {
         $basePath = App::getRequest('root_path');
-        $metaTags = App::getConfigSection('meta');
+        //$metaTags = App::getConfigSection('meta');
         $this->layout = isset($params['layout']) ? $params['layout'] : $this->layoutDefailt;
         $breadcrumbs = !empty($params['breadcrumbs']) ?
             $this->renderPart('parts/breadcrumbs', ['breadcrumbs'=>$params['breadcrumbs']]) : '';
-        $h1 = isset($params['h1']) ? $params['h1'] : 'Sample H1 for page';
+        //$h1 = isset($params['h1']) ? $params['h1'] : 'Sample H1 for page';
 
 
         $layoutFile = $basePath . '/app/views/' . $this->layout.'.html';
@@ -60,9 +60,8 @@ class View
         $layout = $this->replace($layout, [
             'content' => $content,
             'breadcrumbs' => $breadcrumbs,
-            'h1' => $h1,
         ]);
-        $layout = $this->replace($layout, $metaTags);
+        $layout = $this->replace($layout, $params['meta']);
 
         //put site configs
         $siteConfigs = App::getConfigSection('site');
@@ -130,8 +129,10 @@ class View
      */
     private function replace($content, $replaces = [])
     {
-        foreach ($replaces as $key => $value) {
-            $content = preg_replace('/\{\{\s*'.$key.'\s*\}\}/', $value, $content);
+        if (!empty($replaces)) {
+            foreach ($replaces as $key => $value) {
+                $content = preg_replace('/\{\{\s*' . $key . '\s*\}\}/', $value, $content);
+            }
         }
         return $content;
     }

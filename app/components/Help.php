@@ -132,4 +132,13 @@ class Help
     {
         return $status ? 'Completed' : 'In process';
     }
+
+    public function arrayMap($array, $from, $to)
+    {
+        $out = [];
+        foreach ($array as $item) {
+            $out[$item[$from]] = $item[$to];
+        }
+        return $out;
+    }
 }

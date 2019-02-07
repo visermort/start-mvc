@@ -16,12 +16,6 @@ use Cartalyst\Sentinel\Activations\EloquentActivation;
 class SiteController extends Controller
 {
 
-    protected $actionRules = [
-
-
-    ];
-
-
 
 
 }

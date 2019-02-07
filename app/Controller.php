@@ -11,35 +11,11 @@ class Controller
 {
     public $actionParams;
 
-    protected $actionName;
+    protected $actionSlug;
 
-    protected $h1 = 'H1 for page';
-
-    protected $actionRules = [
-        'notaccess' => [
-            'breadcrumbs'=>[
-                'title'=>'405',
-                'url' => ''
-            ],
-            'h1' => '405 <small>not access to page</small>',
-            'title' => 'Site title. 405 Not access',
-        ],
-
-    ];
-
-    protected $actionRulesNotFount = [
-        'notfound' => [
-            'breadcrumbs' => [
-                'title' => '404',
-                'url' => '',
-            ],
-            'h1' => '404 <small>Page Not Found</small>',
-            'title' => 'Site title. 404 Not Found',
-        ],
-    ];
+    protected $meta;
 
     protected $layout = 'layouts/main';
-
 
     protected $breadcrumbs = [];
 
@@ -47,9 +23,9 @@ class Controller
      * Controller constructor.
      * @param $action
      */
-    public function __construct($action = 'index', $actionParams = [])
+    public function __construct($actionSlug = 'site.index', $actionParams = [])
     {
-        $this->actionName = $action;
+        $this->actionSlug = $actionSlug;
         $this->actionParams = $actionParams;
         $this->beforeAction();
     }
@@ -59,40 +35,31 @@ class Controller
      */
     public function beforeAction()
     {
-        //make breadcrumbs
-        if (!empty($this->actionRules[$this->actionName]['breadcrumbs'])) {
+        //metadata
+        $this->meta = App::getConfig('meta.' . $this->actionSlug) ?
+            App::getConfig('meta.' . $this->actionSlug) : App::getConfig('site.index');
+        //breadcrumbs
+        $this->breadcrumbs[] = ['title' => 'Home', 'url' => '/'];
+        $slugs = explode('.', $this->actionSlug);
+        $help = App::getComponent('help');
+        $routes = $help->arrayMap(App::getConfigSection('routes'), 2, 1);
+        $routesArr = [];
+        foreach ($routes as $key => $route) {
+            $keyArr = explode('.', $key);
+            $index = $keyArr[0].'.'.$keyArr[1];
+            $routesArr[$index] = preg_replace('/\\/*{.*\}/', '', $route);
+        }
+        if (isset(App::getConfig('meta.'.$slugs[0] . '.index')['breadcrumbs'])) {
             $this->breadcrumbs[] = [
-                'title' => 'Home',
-                'url' => '/',
+                'title' => App::getConfig('meta.'.$slugs[0] . '.index')['breadcrumbs'],
+                'url' => isset($routesArr[$slugs[0] . '.index']) ? $routesArr[$slugs[0] . '.index'] : false,
             ];
-            if ($this->actionName != 'index') {
-                if (!empty($this->actionRules['index']['breadcrumbs'])) {
-                    $this->breadcrumbs[] = [
-                        'title' => $this->actionRules['index']['breadcrumbs']['title'],
-                        'url' => !empty($this->actionRules['index']['breadcrumbs']['url']) ?
-                            $this->actionRules['index']['breadcrumbs']['url'] : false,
-                    ];
-                }
-            }
+        }
+        if ($slugs[0] . '.index' != $this->actionSlug && isset(App::getConfig('meta.'.$this->actionSlug)['breadcrumbs'])) {
             $this->breadcrumbs[] = [
-                'title' => $this->actionRules[$this->actionName]['breadcrumbs']['title'],
-                'url' => !empty($this->actionRules[$this->actionName]['breadcrumbs']['url']) ?
-                    $this->actionRules[$this->actionName]['breadcrumbs']['url'] : false,
+                'title' => App::getConfig('meta.'.$this->actionSlug)['breadcrumbs'],
+                'url' => isset($routesArr[$this->actionSlug]) ? $routesArr[$this->actionSlug] : false,
             ];
-
-        }
-        //set meta and h1 if these are set in actionRules
-        if (isset($this->actionRules[$this->actionName]['h1'])) {
-            $this->h1 = $this->actionRules[$this->actionName]['h1'];
-        }
-        if (isset($this->actionRules[$this->actionName]['title'])) {
-            App::setMeta('title', $this->actionRules[$this->actionName]['title']);
-        }
-        if (isset($this->actionRules[$this->actionName]['description'])) {
-            App::setMeta('description', $this->actionRules[$this->actionName]['description']);
-        }
-        if (isset($this->actionRules[$this->actionName]['keywords'])) {
-            App::setMeta('keywords', $this->actionRules[$this->actionName]['keywords']);
         }
     }
     /**
@@ -103,9 +70,9 @@ class Controller
     public function render($tempalte, $params = [])
     {
         $view = new View();
-        $params['breadcrumbs'] = $this->breadcrumbs;
+        $params['meta'] = $this->meta;
         $params['layout'] = $this->layout;
-        $params['h1'] = $this->h1;
+        $params['breadcrumbs'] = $this->breadcrumbs;
 
         return $view->renderPage($tempalte, $params);
     }
@@ -126,20 +93,24 @@ class Controller
      */
     public function actionNotfound()
     {
-        $this->actionName = 'notfound';
+        $this->actionSlug = 'notfound';
         $this->actionParams = [];
-        $this->actionRules = $this->actionRulesNotFount;
         $this->breadcrumbs=[];
         $this->beforeAction();
+        $this->breadcrumbs[] = ['title' => 404];
         header("HTTP/1.x 404 Not Found");
         header("Status: 404 Not Found");
-
         echo $this->render('404');
         exit;
     }
 
     public function actionNotaccess()
     {
+        $this->actionSlug = 'notaccess';
+        $this->actionParams = [];
+        $this->breadcrumbs=[];
+        $this->beforeAction();
+        $this->breadcrumbs[] = ['title' => 405];
         header("HTTP/1.0 405 Method Not Allowed");
         header("Status: 405 Method Not Allowed");
         echo $this->render('405');

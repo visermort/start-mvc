@@ -13,47 +13,17 @@ use app\models\Task;
  */
 class TaskController extends Controller
 {
-
-    protected $actionRules = [
-        'index' => [
-            'breadcrumbs'=>false,
-            'h1' => 'Tasks',
-        ],
-        'create' => [
-            'breadcrumbs'=>[
-                'title'=>'Create',
-                'url' => '/task/create'
-            ],
-            'h1' => 'Task <small>create</small>',
-        ],
-        'update' => [
-            'breadcrumbs'=>[
-                'title'=>'Update',
-                'url' => '/task/update'
-            ],
-            'h1' => 'Task <small>update</small>',
-            'access' => 'login',
-        ],
-        'result' => [
-            'breadcrumbs'=>[
-                'title'=>'Result',
-                'url' => '/task/result'
-            ],
-            'h1' => 'Task <small>create result</small>',
-        ],
-
-    ];
-
     /**
      * @return string
      */
     public function actionIndex()
     {
-        $this->layout = 'layouts/index';
-
         $sortBy = App::getRequest('get', 'sort');
         $page = App::getRequest('get', 'page');
         $direction = App::getRequest('get', 'order');
+        if ($page > 1) {
+            $this->breadcrumbs[] = ['title' => 'Page '.$page];
+        }
 
         $database = Task::select('tasks.*', 'users.first_name', 'users.last_name', 'users.email')
             ->leftJoin('users', 'users.id', '=', 'tasks.user_id');
@@ -68,7 +38,7 @@ class TaskController extends Controller
         $tasks = $pagination->data();
         $pagination = $pagination->pagination();
 
-        return $this->render('index/tasks', ['tasks' => $tasks, 'pagination' => $pagination]);
+        return $this->render('task/index', ['tasks' => $tasks, 'pagination' => $pagination]);
     }
 
     /**

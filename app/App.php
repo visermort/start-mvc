@@ -31,6 +31,8 @@ class App
 
     private $actionName;
 
+    private $actionSlug;
+
     private $actionParams =[];
 
     /**
@@ -93,6 +95,7 @@ class App
                 $this->controllerName = 'app\controllers\\' . ucfirst($handler[0]) . 'Controller';
                 $controllerFile = ucfirst($handler[0]) . 'Controller.php';
                 $this->actionName = 'action' . ucfirst($handler[1]);
+                $this->actionSlug = $handler[0] . '.' . $handler[1];
                 if (!file_exists(self::$request['root_path'] . '/app/controllers/' . $controllerFile) ||
                     !method_exists($this->controllerName, $this->actionName)) {
                     //there is not a controller file or action name == index
@@ -223,8 +226,8 @@ class App
      */
     private function startAction()
     {
-        $actionName = strtolower(substr($this->actionName, 6));
-        $this->controller = new $this->controllerName($actionName, $this->actionParams);
+        //$actionName = strtolower(substr($this->actionName, 6));
+        $this->controller = new $this->controllerName($this->actionSlug, $this->actionParams);
         if ($this->controller) {
             $method = $this->actionName;
             echo $this->controller->$method();

@@ -13,34 +13,6 @@ use app\models\User;
  */
 class AccountController extends Controller
 {
-
-    protected $actionRules = [
-        'index' => [
-            'breadcrumbs'=>[
-                'title' => 'Account',
-                'url' => '/account/logout'
-            ],
-            'h1' => 'Account <small>home page</small>',
-        ],
-        'logout' => [
-            'breadcrumbs'=>[
-                'title'=>'Logout',
-                'url' => '/account/logout'
-            ],
-            'h1' => 'Account <small>logout</small>',
-        ],
-        'login' => [
-            'breadcrumbs'=>[
-                'title'=>'Login',
-                'url' => '/login'
-            ],
-            'h1' => 'Login',
-            'title' => 'title for index/login',
-            'description' => 'desct for index/login',
-            'keywords' => 'kw for index login',
-        ]
-    ];
-
     /**
      * create task or render form
      * @param $params
