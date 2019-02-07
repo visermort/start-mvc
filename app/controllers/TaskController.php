@@ -84,6 +84,10 @@ class TaskController extends Controller
     public function actionUpdate()
     {
         $id = $this->actionParams['id'];
+        $task = Task::find($id);
+        if (!$task) {
+            return $this->actionNotfound();
+        }
         if (App::getRequest('method') == 'POST') {
             //if post
             // validate and clean post data
@@ -94,7 +98,6 @@ class TaskController extends Controller
             $validateResult = $validator->validate($postData, Task::$rulesUpdate);
             if ($validateResult === true) {
                 //write data
-                $task = Task::find($id);
                 $task->text = $postData['text'];
                 $task->status = $postData['status'];
                 $result = $task->save();
@@ -111,11 +114,6 @@ class TaskController extends Controller
             }
         }
 
-
-        $task = Task::find($id);
-        if (!$task) {
-            return $this->actionNotfound();
-        }
         return  $this->render('task/update', ['task' => $task]);
     }
 
