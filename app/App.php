@@ -109,17 +109,20 @@ class App
                 }
                 if (isset($handler[2])) {
                     //part of hangler for checking permissions
-                    //need login and not logged
-                    if (App::isGuest()) {
-                        $this->redirect(App::getConfig('app.login_url'));
-                    }
-                    //check permission for $handler[2]
-                    $auth = self::getComponent('auth');
-                    $user = self::getUser();
-                    $checkUser = $user ? $auth->hasAccessTo($user->email, $handler[2]) : false;
-                    if (!$checkUser) {
-                        //user does not exists or user does not have a permission
-                        $this->error405();
+                    if ($handler[2] == 'auth') {
+                        //need login and not logged
+                        if (App::isGuest()) {
+                            $this->redirect(App::getConfig('app.login_url'));
+                        }
+                    } else {
+                        //check permission for $handler[2]
+                        $auth = self::getComponent('auth');
+                        $user = self::getUser();
+                        $checkUser = $user ? $auth->hasAccessTo($user->email, $handler[2]) : false;
+                        if (!$checkUser) {
+                            //user does not exists or user does not have a permission
+                            $this->error405();
+                        }
                     }
                 }
                 break;
