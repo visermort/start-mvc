@@ -3,11 +3,12 @@
 namespace app\components;
 
 use Valitron\Validator as Valitron;
+use app\Component;
 /**
  * Class Help
  * @package app\components
  */
-class Validator
+class Validator extends Component
 {
 
     /**

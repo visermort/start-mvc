@@ -6,16 +6,17 @@ use Illuminate\Database\Capsule\Manager as Capsule;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Container\Container;
 use app\App;
+use app\Component;
 /**
  * Class Help
  * @package app\components
  */
-class Db
+class Db extends Component
 {
     /**
      * Db init
      */
-    public function __construct()
+    public static function init()
     {
         $dbConfig = App::getConfig('database.connection');
 
@@ -40,6 +41,8 @@ class Db
 
         // Setup the Eloquent ORM... (optional; unless you've used setEventDispatcher())
         $capsule->bootEloquent();
+
+        return parent::init();
     }
 
 }

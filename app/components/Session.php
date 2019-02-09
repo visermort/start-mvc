@@ -2,19 +2,21 @@
 
 namespace app\components;
 
+use app\Component;
 /**
  * Class Session
  * @package app\components
  */
-class Session
+class Session extends Component
 {
     protected $flashPrefix = '_flash';
 
-    public function __construct()
+    public static function init()
     {
         if (session_id() == '') {
             session_start();
         }
+        return parent::init();
     }
 
     /**

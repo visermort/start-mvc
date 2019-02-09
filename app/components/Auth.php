@@ -3,16 +3,19 @@
 namespace app\Components;
 
 use app\App;
+use app\Component;
 use Cartalyst\Sentinel\Native\Facades\Sentinel;
 
 /**
  * Class Auth
  * @package app\Components
  */
-class Auth
+class Auth extends Component
 {
-
-    public function __construct()
+    /**
+     * Db init
+     */
+    public static function init()
     {
         try {
             App::getComponent('db');
@@ -25,7 +28,9 @@ class Auth
                 echo $e->getMessage();
             }
         }
+        return parent::init();
     }
+
     /**
      * activatioin key
      * @param $userId

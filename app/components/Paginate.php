@@ -2,12 +2,13 @@
 
 namespace app\components;
 use app\App;
+use app\Component;
 
 /**
  * Class Paginate
  * @package app\components
  */
-class Paginate
+class Paginate extends Component
 {
     protected $database;
     protected $limit;
@@ -21,7 +22,7 @@ class Paginate
      * @param $database
      * @param array $params
      */
-    public function init($database, $params = [])
+    public function start($database, $params = [])
     {
         $this->database = $database;
         $this->page = isset($params['page']) ? $params['page'] : $this->page;

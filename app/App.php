@@ -22,6 +22,9 @@ class App
      */
     private static $components = [];
 
+    /**
+     * @var null
+     */
     private static $user = null;
 
     /*
@@ -106,16 +109,20 @@ class App
                 }
                 if (isset($handler[2])) {
                     //part of hangler for checking permissions
-                    if (App::isGuest()) {
-                        //not logged
-                        $this->redirect(App::getConfig('app.login_url'));
-                    }
-                    $auth = self::getComponent('auth');
-                    $email = self::getUser()->email;
-                    $checkUser = $auth->hasAccessTo($email, $handler[2]);
-                    if (!$checkUser) {
-                        //does not have a permission
-                        $this->error405();
+                    if ($handler[2] == 'auth') {
+                        //need login and not logged
+                        if (App::isGuest()) {
+                            $this->redirect(App::getConfig('app.login_url'));
+                        }
+                    } else {
+                        //check permission for $handler[2]
+                        $auth = self::getComponent('auth');
+                        $user = self::getUser();
+                        $checkUser = $user ? $auth->hasAccessTo($user->email, $handler[2]) : false;
+                        if (!$checkUser) {
+                            //user does not exists or user does not have a permission
+                            $this->error405();
+                        }
                     }
                 }
                 break;
@@ -190,7 +197,7 @@ class App
         $name = ucfirst($name);
         $className = 'app\components\\' . $name;
         if (self::$components[$name] === null && class_exists($className)) {
-            self::$components[$name] = new $className();
+            self::$components[$name] = $className::init();
         }
         return self::$components[$name];
     }
@@ -292,7 +299,10 @@ class App
         foreach ($componentFiles as $file) {
             if (is_file($componentsDirectory . '/' . $file)) {
                 $fileKey = str_replace('.php', '', $file);
-                self::$components[$fileKey] = null;
+                if (class_exists('app\components\\' . $fileKey) &&
+                    is_subclass_of('app\components\\' . $fileKey, 'app\Component')) {
+                    self::$components[$fileKey] = null;
+                }
             }
         }
     }

@@ -3,11 +3,12 @@
 namespace app\components;
 
 use app\App;
+use app\Component;
 /**
  * Class Help
  * @package app\components
  */
-class Help
+class Help extends Component
 {
     /**
      * @param $format

@@ -33,7 +33,7 @@ class TaskController extends Controller
         //app component
         $pagination = App::getComponent('paginate');
         //component init
-        $pagination->init($database, ['page' => $page]);
+        $pagination->start($database, ['page' => $page]);
         //component data and pagination data
         $tasks = $pagination->data();
         $pagination = $pagination->pagination();
