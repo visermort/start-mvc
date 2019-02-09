@@ -1,7 +1,7 @@
 <?php
 
 return [
-    ['GET',           '/', 'task.index'],
+    ['GET',           '/', 'task.index'],// controller.action [.permission]
     ['GET',           '/task/result', 'task.result'],
     [['GET', 'POST'], '/login', 'account.login'],
 
