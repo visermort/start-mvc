@@ -1,11 +1,11 @@
 <!doctype html>
 <html lang="en" class="no-js">
 
-{{ include layouts/parts/head }}
+{% include 'layouts/parts/head.twig' %}
 
 <body>
 
-    {{ include layouts/parts/nav }}
+    {% include 'layouts/parts/nav.twig' %}
 
 
     <!-- Page Content -->
@@ -14,20 +14,22 @@
         <!-- Page Heading/Breadcrumbs -->
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="page-header">{{ h1 }}
+                <h1 class="page-header">{{ meta.h1 }}
                     <!--<small>Subheading</small>-->
                 </h1>
-                {{ breadcrumbs }}
+                {% include 'parts/breadcrumbs.twig' %}
             </div>
         </div>
         <!-- /.row -->
 
-        {{ content }}
+        {% block content %}
+
+        {% endblock %}
 
         <hr>
 
         <!-- Footer -->
-        {{ includelayouts/parts/footer}}
+        {% include 'layouts/parts/footer.twig' %}
 
 
     </div>

@@ -1,3 +1,7 @@
+{% extends 'layouts/main.twig' %}
+
+{% block content %}
+
 <div class="row">
     <div class="col-md-8">
         <h3>Create a task</h3>
@@ -6,32 +10,32 @@
                 <div class="controls">
                     <label for="first_name">First Name:</label>
                     <input type="text" class="form-control"  name="first_name" id="first_name" placeholder="Enter your first name" required data-validation-required-message="Please enter first your name."
-                        value="<?php if (isset($old['first_name'])){ echo $old['first_name']; } ?>">
-                    <p class="help-block"><?php if (isset($errors['first_name'])){ echo $errors['first_name']; } ?></p>
+                        value="{{ old.first_name ? old.first_name : '' }}">
+                    <p class="help-block">{{ errors.first_name ? errors.first_name : '' }}</p>
                 </div>
             </div>
             <div class="control-group form-group">
                 <div class="controls">
                     <label for="last_name">Last Name:</label>
                     <input type="tel" class="form-control" placeholder="Enter your first name"  name="last_name"  id="last_name" data-validation-required-message="Please enter your last name."
-                           value="<?php if (isset($old['last_name'])){ echo $old['last_name']; } ?>">
-                    <p class="help-block"><?php if (isset($errors['last_name'])){ echo $errors['last_name']; } ?></p>
+                           value="{{ old.last_name ? old.last_name : '' }}">
+                    <p class="help-block">{{ errors.last_name ? errors.last_name : '' }}</p>
                 </div>
             </div>
             <div class="control-group form-group">
                 <div class="controls">
                     <label for="email">Email Address:</label>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email"  required data-validation-required-message="Please enter your email address."
-                           value="<?php if (isset($old['email'])){ echo $old['email']; } ?>">
-                    <p class="help-block"><?php if (isset($errors['email'])){ echo $errors['email']; } ?></p>
+                           value="{{ old.email ? old.email : '' }}">
+                    <p class="help-block">{{ errors.email ? errors.email : '' }}</p>
                 </div>
             </div>
             <div class="control-group form-group">
                 <div class="controls">
                     <label for="text">Text:</label>
                     <textarea rows="10" cols="100" class="form-control" placeholder="Enter task text"  name="text" id="text" required data-validation-required-message="Please enter task text" maxlength="999" style="resize:none"
-                       ><?php if (isset($old['text'])){ echo $old['text']; } ?></textarea>
-                    <p class="help-block"><?php if (isset($errors['text'])){ echo $errors['text']; } ?></p>
+                       >{{ old.text ? old.text : '' }}</textarea>
+                    <p class="help-block">{{ errors.text ? errors.text : '' }}</p>
                 </div>
             </div>
             <div id="success"></div>
@@ -45,3 +49,5 @@
         </p>
     </div>
 </div>
+
+{% endblock %}

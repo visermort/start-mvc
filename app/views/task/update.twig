@@ -1,0 +1,49 @@
+{% extends 'layouts/main.twig' %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-8">
+            <h3>Update a task</h3>
+            <form id="update-task" method="post">
+                <div class="control-group form-group">
+                    <div class="controls">
+                        <label for="text">Text:</label>
+                        <textarea rows="10" cols="100" class="form-control" placeholder="Enter task text"  name="text" id="text" required data-validation-required-message="Please enter task text" maxlength="999" style="resize:none"
+                           >{{ old.text ? old.text : task.text }}</textarea>
+                        <p class="help-block">{{ errors.text ? errors.text : ''}}</p>
+                    </div>
+                </div>
+                <div class="control-group form-group">
+                    <div class="controls">
+                        <label for="status">Status:</label>
+                        <select class="form-control" name="status" id="status">
+                            <option value="">==Select status==</option>
+                            <option value="0" {% if task.status != '1'  %}selected{% endif %}>In process</option>
+                            <option value="1" {% if task.status == '1'  %}selected{% endif %}>Completed</option>
+                        </select>
+                        <p class="help-block">{{ errors.status ? errors.status : ''}}</p>
+                    </div>
+                </div>
+                <div id="success"></div>
+                <!-- For success/fail messages -->
+                <button type="submit" class="btn btn-primary">Update</button>
+            </form>    </div>
+        <div class="col-md-4">
+            <h3>About tasks</h3>
+            <p>
+                User {{ task.user.first_name }} {{ task.user.last_name }}
+            </p>
+            <p>
+                email {{ task.user.email }}
+            </p>
+            <p>
+                Created {{ date('d.m.Y', task.created_at) }}
+            </p>
+            <p>
+                Updated {{ date('d.m.Y', task.updated_at) }}
+            </p>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'layouts/main.twig' %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col-md-12">
+
+            <div class="panel-body datagrid">
+
+                {% set permission = user_has('admin') %}
+
+                <table id="tt" class="easyui-datagrid" style="width:100%;height:auto;">
+                    <thead>
+                    <tr class="head">
+                        <th class="table-sorting" nowrap>{{ sort_by('id', 'ID')|raw }}</th>
+                        <th class="table-sorting" nowrap>{{ sort_by('email', 'Email')|raw }}</th>
+                        <th class="table-sorting" nowrap>{{ sort_by('first_name', 'Name')|raw }}</th>
+                        <th class="table-sorting" nowrap>{{ sort_by('status', 'Status')|raw }}</th>
+                        {% if permission %}
+                            <th class="table-sorting" nowrap></th>
+                        {% endif %}
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for task in tasks %}
+                        <tr>
+                            <td>{{ task.id }}</td>
+                            <td>{{ task.email }}</td>
+                            <td>{{ task.first_name~' '~task.last_name }}</td>
+                            <td>{{ status(task.status) }}</td>
+                            {% if permission %}
+                                <td><a href="/task/update/{{ task.id }}"><i class="fa fa-pencil-square-o" aria-hidden="true" ></i></a></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+
+
+                    </tbody>
+                </table>
+            </div>
+            {% include 'parts/pagination.twig' %}
+        </div>
+    </div>
+{% endblock %}
+
+
+
+

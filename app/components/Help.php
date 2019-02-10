@@ -10,16 +10,6 @@ use app\Component;
  */
 class Help extends Component
 {
-    /**
-     * @param $format
-     * @param bool $date
-     * @return string
-     */
-    public function date($format, $date = false)
-    {
-        $date = $date ? $date : time();
-        return date($format, $date);
-    }
 
     public function pagination($pagination)
     {
@@ -99,39 +89,6 @@ class Help extends Component
             '" aria-hidden="true"></i>  ' : '' ;
 
         return '<a href="'.$href.'">'.$icon.'&nbsp;'.$title.'</a>';
-    }
-
-    /**
-     * @return string
-     */
-    public function user()
-    {
-        $user = App::getUser();
-        if ($user) {
-            $out = '<li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">'.$user['first_name'].' '.$user['last_name'].'<b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a href="/account">Home</a>
-                        </li>
-                        <li>
-                            <a href="/account/logout">Logout</a>
-                        </li>
-                    </ul>
-                </li>';
-        } else {
-            $out = '<li><a href="/login">Login</a></li>';
-        }
-        return $out;
-    }
-
-    /**
-     * @param $status
-     * @return string
-     */
-    public function status($status)
-    {
-        return $status ? 'Completed' : 'In process';
     }
 
     public function arrayMap($array, $from, $to)
