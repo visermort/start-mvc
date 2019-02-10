@@ -4,13 +4,16 @@ namespace app\components;
 
 use Valitron\Validator as Valitron;
 use app\Component;
+use app\App;
 /**
  * Class Help
  * @package app\components
  */
 class Validator extends Component
 {
+    protected $validator;
 
+    protected $csrfErrorText = 'You session is expired. Try again';
     /**
      * @param $data
      * @param $rules
@@ -18,14 +21,14 @@ class Validator extends Component
      */
     public function validate($data, $rules)
     {
-        $validator = new Valitron($data);
-        $validator->rules($rules);
+        $this->validator = new Valitron($data);
+        $this->validator->rules($rules);
 
-        if ($validator->validate()) {
+        if ($this->checkCsrf($data, $rules) && $this->validator->validate()) {
             return true;
         } else {
             // Errors
-            $errors = $validator->errors();
+            $errors = $this->validator->errors();
             $out = [];
             foreach ($errors as $key => $error) {
                 $out[$key] = implode(' ', $error);
@@ -44,6 +47,30 @@ class Validator extends Component
             $item = strip_tags($item);
         }
         return $data;
+    }
+
+    /**
+     * @param $data
+     * @param $rules
+     */
+    protected function checkCsrf($data, $rules)
+    {
+        $check = false;
+        $out = true;
+        foreach ($rules['required'] as $required) {
+            if (in_array('csrf', $required)) {
+                $check = true;
+                break;
+            }
+        }
+        if ($check) {
+            $session = App::getComponent('session');
+            if (!isset($data['csrf']) || !$session->checkCsrf($data['csrf'])) {
+                $out = false;
+                $this->validator->error('csrf', $this->csrfErrorText);
+            }
+        }
+        return $out;
     }
 
 }

@@ -14,12 +14,12 @@ class Task extends Model
     protected $primaryKey = 'id';
 
     public static $rules = [
-        'required'=> [['first_name', 'email', 'text']],
+        'required'=> [['first_name', 'email', 'text', 'csrf']],
         'email' => [['email']],
         'regex' => [['email', '/^(?!(admin@)).*$/']]//to protect email like admin@someemail.com
     ];
     public static $rulesUpdate = [
-        'required'=> [['text']],
+        'required'=> [['text', 'csrf']],
     ];
 
     /**

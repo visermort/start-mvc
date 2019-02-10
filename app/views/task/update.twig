@@ -6,6 +6,7 @@
         <div class="col-md-8">
             <h3>Update a task</h3>
             <form id="update-task" method="post">
+                <input type="hidden" name="csrf" value="{{ csrf() }}">
                 <div class="control-group form-group">
                     <div class="controls">
                         <label for="text">Text:</label>
@@ -25,7 +26,7 @@
                         <p class="help-block">{{ errors.status ? errors.status : ''}}</p>
                     </div>
                 </div>
-                <div id="success"></div>
+                <div id="success">{{ errors.csrf ? errors.csrf : '' }}</div>
                 <!-- For success/fail messages -->
                 <button type="submit" class="btn btn-primary">Update</button>
             </form>    </div>

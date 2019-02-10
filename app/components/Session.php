@@ -65,6 +65,30 @@ class Session extends Component
         session_destroy();
     }
 
+    /** set scrf key
+     * @return string
+     * @throws \Exception
+     */
+    public function setCsrf()
+    {
+        $csrf = bin2hex(random_bytes(32));
+        $this->set('csrf', $csrf);
+        $this->set('csrf_time', time());
+        return $csrf;
+    }
+
+    /**
+     * check csrf key
+     * @param $key
+     */
+    public function checkCsrf($key)
+    {
+        $out = ($key == $this->get('csrf') && time() - $this->get('csrf_time') < 60 * 60 * 10) ? true : false;//10 min
+        $this->deleteKey('csrf');
+        $this->deleteKey('csrf_time');
+        return $out;
+    }
+
     /**
      * delete key
      * @param $key

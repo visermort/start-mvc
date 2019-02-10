@@ -11,7 +11,7 @@ class User extends Model
 
     public static $loginRules = [
         'required' => [
-            ['name', 'password']
+            ['name', 'password', 'csrf']
         ],
     ];
 

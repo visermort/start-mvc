@@ -35,6 +35,10 @@ return [
     },
     'status' => function ($status) {
         return $status ? 'Completed' : 'In process';
+    },
+    'csrf' => function() {
+        $session = App::getComponent('session');
+        return $session->setCsrf();
     }
 
 
