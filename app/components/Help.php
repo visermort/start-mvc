@@ -31,13 +31,13 @@ class Help extends Component
             $params['page'] = null;
             $paramsQuery = http_build_query($params);
             $href = $path . ($paramsQuery ? '?' . $paramsQuery : '');
-            $out .= '<li><a href="'.$href.'">&laquo;</a></li>';
+            $out .= '<li><a class="ajax-button" href="'.$href.'">&laquo;</a></li>';
         }
         if ($pagination['page'] > 1) {
             $params['page'] = $pagination['page'] - 1;
             $paramsQuery = http_build_query($params);
             $href = $path . ($paramsQuery ? '?' . $paramsQuery : '');
-            $out .= '<li><a href="'.$href.'">&lsaquo;</a></li>';
+            $out .= '<li><a class="ajax-button" href="'.$href.'">&lsaquo;</a></li>';
         }
         for ($i = $buttonStart; $i <= $pagination['pages']; $i++) {
             $active = $i == $pagination['page'];
@@ -45,7 +45,7 @@ class Help extends Component
             $paramsQuery = http_build_query($params);
             $href = $path . ($paramsQuery ? '?' . $paramsQuery : '');
             $out .= $active ? '<li class="active"><span>'.$i.'</span></li>' :
-                '<li><a href="'.$href.'">'.$i.'</a></li>';
+                '<li><a class="ajax-button" href="'.$href.'">'.$i.'</a></li>';
             if ($i == $buttonStart + $buttonCount - 1) {
                 break;
             }
@@ -54,13 +54,13 @@ class Help extends Component
             $params['page'] = $pagination['page'] + 1;
             $paramsQuery = http_build_query($params);
             $href = $path . ($paramsQuery ? '?' . $paramsQuery : '');
-            $out .= '<li><a href="'.$href.'">&rsaquo;</a></li>';
+            $out .= '<li><a class="ajax-button" href="'.$href.'">&rsaquo;</a></li>';
         }
         if ($pagination['page'] < $pagination['pages']) {
             $params['page'] = $pagination['pages'];
             $paramsQuery = http_build_query($params);
             $href = $path . ($paramsQuery ? '?' . $paramsQuery : '');
-            $out .= '<li><a href="'.$href.'">&raquo;</a></li>';
+            $out .= '<li><a class="ajax-button" href="'.$href.'">&raquo;</a></li>';
         }
 
         $out .= '</ul>';
@@ -88,7 +88,7 @@ class Help extends Component
         $icon = $name == $sort ? '<i class="fa fa-sort-'.($order == 'desc' ? 'desc' : 'asc' ).
             '" aria-hidden="true"></i>  ' : '' ;
 
-        return '<a href="'.$href.'">'.$icon.'&nbsp;'.$title.'</a>';
+        return '<a class="ajax-button" href="'.$href.'">'.$icon.'&nbsp;'.$title.'</a>';
     }
 
     public function arrayMap($array, $from, $to)

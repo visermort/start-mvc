@@ -38,6 +38,8 @@ class TaskController extends Controller
         $tasks = $pagination->data();
         $pagination = $pagination->pagination();
 
+        $this->ajaxResponse = App::getRequest('isAjax');
+
         return $this->render('task/index', ['tasks' => $tasks, 'pagination' => $pagination]);
     }
 

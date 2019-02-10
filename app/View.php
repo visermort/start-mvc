@@ -11,7 +11,13 @@ class View
     /**
      * @var string
      */
-    public $layoutDefailt = 'layouts/main';
+    protected $layoutDefailt = 'layouts/main';
+
+    protected $layoutAjax = 'layouts/main_ajax';
+
+    protected $layout;
+
+    public $ajax = false;
 
     /**
      * @var \Twig_Environment
@@ -60,32 +66,15 @@ class View
      */
     public function renderPage($template, $params)
     {
+        $this->beforeRender();
         $template = $template . '.twig';
+        $params['layout'] = $this->layout;
         return $this->twig->render($template, $params);
     }
 
-
-//    /**
-//     * @param $template
-//     * @param $params
-//     * @return string
-//     */
-//    public function renderPart($template, $params)
-//    {
-//        $basePath = App::getRequest('root_path');
-//        $templateFile = $basePath . '/app/views/' . $template.'.html';
-//        if (!file_exists($templateFile)) {
-//            if (App::getConfig('app.debug')) {
-//                echo 'Template file not found "' . $templateFile . '"';
-//            }
-//            return '';
-//        }
-//        extract($params);
-//        ob_start();
-//        include($templateFile);
-//        $out = ob_get_clean();
-//        return $out;
-//    }
-
+    public function beforeRender()
+    {
+        $this->layout = $this->ajax ? $this->layoutAjax : $this->layoutDefailt;
+    }
 
 }

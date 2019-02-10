@@ -19,6 +19,8 @@ class Controller
 
     protected $breadcrumbs = [];
 
+    protected $ajaxResponse = false;
+
     /**
      * Controller constructor.
      * @param $action
@@ -70,6 +72,7 @@ class Controller
     public function render($tempalte, $params = [])
     {
         $view = new View();
+        $view->ajax = $this->ajaxResponse;
         $params['meta'] = $this->meta;
         $params['layout'] = $this->layout;
         $params['breadcrumbs'] = $this->breadcrumbs;

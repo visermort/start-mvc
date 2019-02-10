@@ -266,6 +266,8 @@ class App
         self::$request['path'] = rawurldecode($path[0]);
         self::$request['isPost'] = !empty(self::$request['post']);
         self::$request['method'] = self::$request['server']['REQUEST_METHOD'];
+        self::$request['isAjax'] =  !empty(self::$request['server']['HTTP_X_REQUESTED_WITH'])
+            && strtolower(self::$request['server']['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
     }
 
     /**
