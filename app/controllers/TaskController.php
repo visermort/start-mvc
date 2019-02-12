@@ -74,8 +74,6 @@ class TaskController extends Controller
             if ($validateResult === true) {
                 //write data
                 $task = Task::createNew($postData);
-                App::getComponent('cache')->clear();
-
                 //redirect with flash data
                 $this->redirect('/task/result', 302, [
                     'success' => $task != null,
@@ -116,7 +114,6 @@ class TaskController extends Controller
                 $task->status = $postData['status'];
                 $result = $task->save();
 
-                App::getComponent('cache')->clear();
                     //redirect with flash data
                 $this->redirect('/task/result', 302, [
                     'success' => $result,

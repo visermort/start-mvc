@@ -3,6 +3,7 @@ namespace app\models;
 
 use Illuminate\Database\Eloquent\Model;
 use app\models\User;
+use app\App;
 
 /**
  * Class Task
@@ -52,6 +53,16 @@ class Task extends Model
         $task->text = $data['text'];
         $task->save();
         return $task;
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        Task::saved(function ($task) {
+            //after save clear cache
+            App::getComponent('cache')->clear();
+        });
     }
 
 }
