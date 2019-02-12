@@ -50,7 +50,9 @@ class Cache extends Component
      */
     public function clear()
     {
-        call_user_func($this->clear);
+        if ($this->clear) {
+            call_user_func($this->clear);
+        }
     }
 
 }
