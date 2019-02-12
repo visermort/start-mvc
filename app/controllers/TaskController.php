@@ -21,7 +21,7 @@ class TaskController extends Controller
         $cache = App::getComponent('cache');
 
         $cacheName = 'task_index' . App::getComponent('help')->multiImplode('_', App::getRequest('get')) .
-            (App::getRequest('isAjax') ? '_ajax' : '');
+            (App::getRequest('isAjax') ? '_ajax' : '') . (App::isGuest() ? '_guest' : '');
 
         $page = $cache->getOrSet($cacheName, function () {
 
