@@ -18,29 +18,40 @@ class TaskController extends Controller
      */
     public function actionIndex()
     {
-        $sortBy = App::getRequest('get', 'sort');
-        $page = App::getRequest('get', 'page');
-        $direction = App::getRequest('get', 'order');
-        if ($page > 1) {
-            $this->breadcrumbs[] = ['title' => 'Page '.$page];
-        }
+        $cache = App::getComponent('cache');
 
-        $database = Task::select('tasks.*', 'users.first_name', 'users.last_name', 'users.email')
-            ->leftJoin('users', 'users.id', '=', 'tasks.user_id');
-        if ($sortBy) {
-            $database = $database->orderBy($sortBy, $direction);
-        }
-        //app component
-        $pagination = App::getComponent('paginate');
-        //component init
-        $pagination->start($database, ['page' => $page]);
-        //component data and pagination data
-        $tasks = $pagination->data();
-        $pagination = $pagination->pagination();
+        $cacheName = 'task_index' . App::getComponent('help')->multiImplode('_', App::getRequest('get')) .
+            (App::getRequest('isAjax') ? '_ajax' : '');
 
-        $this->ajaxResponse = App::getRequest('isAjax');
+        $page = $cache->getOrSet($cacheName, function () {
 
-        return $this->render('task/index', ['tasks' => $tasks, 'pagination' => $pagination]);
+            $sortBy = App::getRequest('get', 'sort');
+            $page = App::getRequest('get', 'page');
+            $direction = App::getRequest('get', 'order');
+
+            if ($page > 1) {
+                $this->breadcrumbs[] = ['title' => 'Page ' . $page];
+            }
+
+            $database = Task::select('tasks.*', 'users.first_name', 'users.last_name', 'users.email')
+                ->leftJoin('users', 'users.id', '=', 'tasks.user_id');
+            if ($sortBy) {
+                $database = $database->orderBy($sortBy, $direction);
+            }
+            //app component
+            $pagination = App::getComponent('paginate');
+            //component init
+            $pagination->start($database, ['page' => $page]);
+            //component data and pagination data
+            $tasks = $pagination->data();
+            $pagination = $pagination->pagination();
+
+            $this->ajaxResponse = App::getRequest('isAjax');
+
+            return $this->render('task/index', ['tasks' => $tasks, 'pagination' => $pagination]);
+        });
+
+        return $page;
     }
 
     /**
@@ -63,6 +74,7 @@ class TaskController extends Controller
             if ($validateResult === true) {
                 //write data
                 $task = Task::createNew($postData);
+                App::getComponent('cache')->clear();
 
                 //redirect with flash data
                 $this->redirect('/task/result', 302, [
@@ -103,6 +115,8 @@ class TaskController extends Controller
                 $task->text = $postData['text'];
                 $task->status = $postData['status'];
                 $result = $task->save();
+
+                App::getComponent('cache')->clear();
                     //redirect with flash data
                 $this->redirect('/task/result', 302, [
                     'success' => $result,

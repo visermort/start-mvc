@@ -91,11 +91,36 @@ class Help extends Component
         return '<a class="ajax-button" href="'.$href.'">'.$icon.'&nbsp;'.$title.'</a>';
     }
 
+    /**
+     * @param $array
+     * @param $from
+     * @param $to
+     * @return array
+     */
     public function arrayMap($array, $from, $to)
     {
         $out = [];
         foreach ($array as $item) {
             $out[$item[$from]] = $item[$to];
+        }
+        return $out;
+    }
+
+    /**
+     * @param $glue
+     * @param $array
+     * @return string
+     */
+    public function multiImplode($glue, $array)
+    {
+        $out = '';
+        if (is_array($array)) {
+            foreach ($array as $key => $item) {
+                $out .= ($glue. $key . $glue . $this->multiImplode($glue, $item));
+            }
+        } else {
+            $out .= (str_replace(' ', $glue, $array));
+
         }
         return $out;
     }

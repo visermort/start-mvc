@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "e3900bd944061bbf36b8857b823b3b89",
+    "content-hash": "f3a19fa75c3b9a4b6ea7f4dfd1d2e893",
     "packages": [
         {
             "name": "cakephp/cache",
@@ -476,6 +476,61 @@
                 "support"
             ],
             "time": "2017-02-23T12:05:30+00:00"
+        },
+        {
+            "name": "desarrolla2/cache",
+            "version": "v2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/desarrolla2/Cache.git",
+                "reference": "ebd1f7bfd1be605a9b5fbb0a4b25a948a31fe963"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/desarrolla2/Cache/zipball/ebd1f7bfd1be605a9b5fbb0a4b25a948a31fe963",
+                "reference": "ebd1f7bfd1be605a9b5fbb0a4b25a948a31fe963",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.4.0"
+            },
+            "require-dev": {
+                "predis/predis": "~1.0.0"
+            },
+            "suggest": {
+                "predis/predis": "Predis support"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Desarrolla2\\Cache\\": "src/",
+                    "Desarrolla2\\Test\\Cache\\": "test/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Daniel González",
+                    "homepage": "http://desarrolla2.com/"
+                }
+            ],
+            "description": "Provides an cache interface for several adapters Apc, Apcu, File, Mongo, Memcache, Memcached, Mysql, Mongo, Redis is supported. New adapters is comming!",
+            "homepage": "https://github.com/desarrolla2/Cache/",
+            "keywords": [
+                "apc",
+                "apcu",
+                "cache",
+                "file",
+                "memcache",
+                "memcached",
+                "mongo",
+                "mysql",
+                "redis"
+            ],
+            "time": "2017-01-18T12:58:33+00:00"
         },
         {
             "name": "doctrine/inflector",
