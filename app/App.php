@@ -27,6 +27,11 @@ class App
      */
     private static $user = null;
 
+    /**
+     * @var bool
+     */
+    private static $isConsole = false;
+
     /*
      * vars for run action
      */
@@ -70,7 +75,13 @@ class App
 
         self::getComponent('auth');
 
-        self::$instance->run();
+
+        if (!isset(self::getRequest('server')['SCRIPT_FILENAME']) ||
+            self::getRequest('server')['SCRIPT_FILENAME'] != 'app.php') {
+            self::$instance->run();
+        } else {
+            self::$isConsole = true;
+        }
         return self::$instance;
     }
 
@@ -142,6 +153,76 @@ class App
             }
         });
         return $dispatcher;
+    }
+
+    /**
+     * return class and method or list of classes-methods if class/method do not exists or is wrong
+     * @param $action  class/method
+     * @return array
+     */
+    public function consoleActionsList($action)
+    {
+        $directory = self::getRequest('root_path');
+        $help = self::getComponent('help');
+
+        if ($action) {
+            $actionPath = explode('/', $action);
+            if (isset($actionPath[1])) {
+                $className = 'app\console\controllers\\'.ucfirst($actionPath[0]).'Controller';
+                $actionName = 'action'.$help->commandToAction($actionPath[1]);
+                if (method_exists($className, $actionName) && is_subclass_of($className, 'app\console\Controller')) {
+                    //slass and method exist, and class extends app\console\Controller
+                    return [
+                        'class' => $className,
+                        'action' => $actionName,
+                        'list' => [],
+                    ];
+                }
+            }
+        }
+        $controllerFiles = array_diff(scandir($directory . '/app/console/controllers'), ['.', '..']);
+        $controllers = [];
+        foreach ($controllerFiles as $file) {
+            if (is_dir($directory . '/app/console/controllers/' . $file)) {
+                continue;
+            }
+            $file = substr($file, 0, -4);
+            $className = 'app\console\controllers\\'.ucfirst($file);
+            if (!class_exists($className) || !is_subclass_of($className, 'app\console\Controller')) {
+                continue;
+            }
+            $reflectionClass = new \ReflectionClass($className);
+            $controllerIndex = strtolower(substr($file, 0, -10));
+            $controllers[$controllerIndex] = [
+                'comment' => trim(preg_replace(
+                    "/[\/\*\r\n]/",
+                    '',
+                    $reflectionClass->getDocComment()
+                )),
+                'methods' => [],
+            ];
+
+            $methods = get_class_methods($className);
+            foreach ($methods as $method) {
+                if (substr($method, 0, 6) == 'action') {
+                    $methodIndex = $help->commandToAction(substr($method, 6), true);
+                    $reflection = new \ReflectionMethod($className, $method);
+                    //$methodIndex = $help->commandToAction($methodName, true);
+                    $controllers[$controllerIndex]['methods'][$methodIndex]['method'] = $method;
+
+                    $controllers[$controllerIndex]['methods'][$methodIndex]['comment'] = trim(preg_replace(
+                        "/[\/\*\r\n]/",
+                        '',
+                        $reflection->getDocComment()
+                    ));
+                }
+            }
+        }
+        return [
+            'class' => false,
+            'action' => false,
+            'list' => $controllers,
+        ];
     }
 
     /**
@@ -227,6 +308,14 @@ class App
         return self::$user;
     }
 
+    /**
+     * @return bool
+     */
+    public static function isConsole()
+    {
+        return self::$isConsole;
+    }
+
 
     /**
      * run action
@@ -256,16 +345,19 @@ class App
         self::$request['get'] = $_GET;
         self::$request['post'] = $_POST;
         self::$request['file'] = $_FILES;
-        self::$request['root_path'] = substr(
-            self::$request['server']['DOCUMENT_ROOT'],
-            0,
-            strlen(self::$request['server']['DOCUMENT_ROOT']) - 4
-        );
-        self::$request['url'] = self::$request['server']['REQUEST_URI'];
+//        self::$request['root_path'] = substr(
+//            self::$request['server']['DOCUMENT_ROOT'],
+//            0,
+//            strlen(self::$request['server']['DOCUMENT_ROOT']) - 4
+//        );
+        self::$request['root_path'] = realpath(__DIR__ . '/../');
+        self::$request['url'] = isset(self::$request['server']['REQUEST_URI']) ?
+            self::$request['server']['REQUEST_URI'] : '';
         $path = explode('?', self::$request['url']);
         self::$request['path'] = rawurldecode($path[0]);
         self::$request['isPost'] = !empty(self::$request['post']);
-        self::$request['method'] = self::$request['server']['REQUEST_METHOD'];
+        self::$request['method'] = isset(self::$request['server']['REQUEST_METHOD']) ?
+            self::$request['server']['REQUEST_METHOD'] : '';
         self::$request['isAjax'] =  !empty(self::$request['server']['HTTP_X_REQUESTED_WITH'])
             && strtolower(self::$request['server']['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest';
     }

@@ -124,4 +124,25 @@ class Help extends Component
         }
         return $out;
     }
+
+    /**
+     * partone-parttwo-partthree to PartoneParttwoPartthree or back if $reverse
+     * @param string $command
+     * @return string
+     */
+    public function commandToAction($command, $reverse = false)
+    {
+        if ($reverse) {
+            $commandArray = array_diff(preg_split('/(?=[A-Z])/', $command), ['']);
+            foreach ($commandArray as &$item) {
+                $item = strtolower($item);
+            }
+            return implode('-', $commandArray);
+        }
+        $commandArray = explode('-', $command);
+        foreach ($commandArray as &$item) {
+            $item = ucfirst($item);
+        }
+        return implode('', $commandArray);
+    }
 }
