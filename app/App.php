@@ -64,11 +64,12 @@ class App
     /**run application
      * @return App
      */
-    public static function init()
+    public static function init($web = true)
     {
         if (self::$instance == null) {
             self::$instance = new self();
         }
+        self::$isConsole = !$web;
         self::$instance->makeRequest();
         self::$instance->makeConfigs();
         self::$instance->makeComponents();
@@ -76,11 +77,8 @@ class App
         self::getComponent('auth');
 
 
-        if (!isset(self::getRequest('server')['SCRIPT_FILENAME']) ||
-            self::getRequest('server')['SCRIPT_FILENAME'] != 'app.php') {
+        if (!self::$isConsole) {
             self::$instance->run();
-        } else {
-            self::$isConsole = true;
         }
         return self::$instance;
     }

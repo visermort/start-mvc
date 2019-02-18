@@ -3,7 +3,7 @@
 require 'vendor/autoload.php';
 require 'autoload.php';
 
-$app = app\App::init();
+$app = app\App::init(false);
 
 $actionList = $app->consoleActionsList(isset($argv[1]) ? $argv[1] : null);
 

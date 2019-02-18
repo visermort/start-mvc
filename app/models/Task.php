@@ -55,10 +55,13 @@ class Task extends Model
         return $task;
     }
 
+    /**
+     * events for model
+     */
     public static function boot()
     {
         parent::boot();
-
+        // on saved
         Task::saved(function ($task) {
             //after save clear cache
             App::getComponent('cache')->clear();
