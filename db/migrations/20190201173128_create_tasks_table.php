@@ -40,6 +40,5 @@ class CreateTasksTable extends AbstractMigration
             ->addColumn('created_at', 'timestamp')
             ->addColumn('updated_at', 'timestamp')
             ->create();
-
     }
 }

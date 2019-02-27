@@ -2,7 +2,12 @@
 
 namespace app\models;
 
-use Illuminate\Database\Eloquent\Model;
+use app\Model;
+
+/**
+ * Class User
+ * @package app\models
+ */
 
 class User extends Model
 {

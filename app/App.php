@@ -314,6 +314,11 @@ class App
         return self::$isConsole;
     }
 
+    public static function getController()
+    {
+        return self::$instance->controller;
+    }
+
 
     /**
      * run action

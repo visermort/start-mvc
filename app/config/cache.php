@@ -2,9 +2,9 @@
 
 use app\App;
 
-$cache = 'file';
+//$cache = 'file';
 //$cache = 'memcached';
-//$cache = 'nocache';
+$cache = 'nocache';
 
 switch ($cache) {
     case ('file'):

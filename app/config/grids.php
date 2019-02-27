@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'limit' => 3,
+    'limit' => 10,
     'paginage_buttons' => 7,
 ];

@@ -5,6 +5,7 @@
     <div class="row ajax-request">
         <div class="col-md-12">
 
+            {{ paginator.info()|raw }}
             <div class="panel-body datagrid">
 
                 {% set permission = user_has('admin') %}
@@ -22,7 +23,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    {% for task in tasks %}
+                    {% for task in paginator.data() %}
                         <tr>
                             <td>{{ task.id }}</td>
                             <td>{{ task.email }}</td>

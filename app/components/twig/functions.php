@@ -20,10 +20,6 @@ return [
     'user' => function () {
         return App::getUser();
     },
-    'pagination' => function ($data) {
-        $help = App::getComponent('help');
-        return $help->pagination($data);
-    },
     'sort_by' => function ($name, $title) {
         $help = App::getComponent('help');
         return $help->sortBy($name, $title);
@@ -36,11 +32,9 @@ return [
     'status' => function ($status) {
         return $status ? 'Completed' : 'In process';
     },
-    'csrf' => function() {
+    'csrf' => function () {
         $session = App::getComponent('session');
         return $session->setCsrf();
     }
-
-
 
 ];

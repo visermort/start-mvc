@@ -10,63 +10,6 @@ use app\Component;
  */
 class Help extends Component
 {
-
-    public function pagination($pagination)
-    {
-        if ((isset($pagination['single']) && $pagination['single']) || $pagination['pages'] == 1) {
-            return '';
-        }
-        $path = App::getRequest('path');
-        $params = App::getRequest('get');
-        $buttonCount = App::getConfig('grids.paginage_buttons');
-        $start = $pagination['page'] - round(floor($buttonCount/2));
-        $buttonStart = $start < 1 ? 1 : $start;
-        $buttonStart = $pagination['pages'] > $buttonCount && $buttonStart + $buttonCount - 1 > $pagination['pages'] ?
-            $pagination['pages'] - $buttonCount + 1 : $buttonStart;
-
-        //make pagination html
-        $out = '<ul class="pagination">';
-
-        if ($pagination['page'] > 1) {
-            $params['page'] = null;
-            $paramsQuery = http_build_query($params);
-            $href = $path . ($paramsQuery ? '?' . $paramsQuery : '');
-            $out .= '<li><a class="ajax-button" href="'.$href.'">&laquo;</a></li>';
-        }
-        if ($pagination['page'] > 1) {
-            $params['page'] = $pagination['page'] - 1;
-            $paramsQuery = http_build_query($params);
-            $href = $path . ($paramsQuery ? '?' . $paramsQuery : '');
-            $out .= '<li><a class="ajax-button" href="'.$href.'">&lsaquo;</a></li>';
-        }
-        for ($i = $buttonStart; $i <= $pagination['pages']; $i++) {
-            $active = $i == $pagination['page'];
-            $params['page'] = $active || $i==1 ? null : $i;
-            $paramsQuery = http_build_query($params);
-            $href = $path . ($paramsQuery ? '?' . $paramsQuery : '');
-            $out .= $active ? '<li class="active"><span>'.$i.'</span></li>' :
-                '<li><a class="ajax-button" href="'.$href.'">'.$i.'</a></li>';
-            if ($i == $buttonStart + $buttonCount - 1) {
-                break;
-            }
-        }
-        if ($pagination['page'] < $pagination['pages']) {
-            $params['page'] = $pagination['page'] + 1;
-            $paramsQuery = http_build_query($params);
-            $href = $path . ($paramsQuery ? '?' . $paramsQuery : '');
-            $out .= '<li><a class="ajax-button" href="'.$href.'">&rsaquo;</a></li>';
-        }
-        if ($pagination['page'] < $pagination['pages']) {
-            $params['page'] = $pagination['pages'];
-            $paramsQuery = http_build_query($params);
-            $href = $path . ($paramsQuery ? '?' . $paramsQuery : '');
-            $out .= '<li><a class="ajax-button" href="'.$href.'">&raquo;</a></li>';
-        }
-
-        $out .= '</ul>';
-        return $out;
-    }
-
     /**
      * @param $name
      * @param $title

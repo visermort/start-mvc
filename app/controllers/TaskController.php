@@ -5,6 +5,7 @@ namespace app\controllers;
 use app\Controller;
 use app\App;
 use app\models\Task;
+use app\lib\Paginator;
 
 
 /**
@@ -13,6 +14,16 @@ use app\models\Task;
  */
 class TaskController extends Controller
 {
+    public function beforeAction()
+    {
+        $page = App::getRequest('get', 'page');
+        if ($page == 1) {
+            $url = App::getRequest('path');
+            $this->redirect($url);
+        }
+        parent::beforeAction();
+    }
+
     /**
      * @return string
      */
@@ -33,22 +44,18 @@ class TaskController extends Controller
                 $this->breadcrumbs[] = ['title' => 'Page ' . $page];
             }
 
-            $database = Task::select('tasks.*', 'users.first_name', 'users.last_name', 'users.email')
+            $query = Task::select('tasks.*', 'users.first_name', 'users.last_name', 'users.email')
                 ->leftJoin('users', 'users.id', '=', 'tasks.user_id');
             if ($sortBy) {
-                $database = $database->orderBy($sortBy, $direction);
+                $query = $query->orderBy($sortBy, $direction);
             }
-            //app component
-            $pagination = App::getComponent('paginate');
-            //component init
-            $pagination->start($database, ['page' => $page]);
-            //component data and pagination data
-            $tasks = $pagination->data();
-            $pagination = $pagination->pagination();
+            $paginator = new Paginator($query, ['page' => $page]);
 
             $this->ajaxResponse = App::getRequest('isAjax');
 
-            return $this->render('task/index', ['tasks' => $tasks, 'pagination' => $pagination]);
+            return $this->render('task/index', [
+                'paginator' => $paginator,
+            ]);
         });
 
         return $page;
@@ -77,8 +84,8 @@ class TaskController extends Controller
                 //redirect with flash data
                 $this->redirect('/task/result', 302, [
                     'success' => $task != null,
-                    'text' => $task != null ? 'Task was created successfully. obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugia' :
-                        'There was error creating task. obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugia'
+                    'text' => $task != null ? 'Task was created successfully.' :
+                        'There was error creating task.'
                 ]);
             } else {
                 //validate fails
@@ -117,8 +124,8 @@ class TaskController extends Controller
                     //redirect with flash data
                 $this->redirect('/task/result', 302, [
                     'success' => $result,
-                    'text' => $result ? 'Task was updated. obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugia' :
-                        'There was an error updating task. obcaecati impedit odit illo dolorum ab tempora nihil dicta earum fugia'
+                    'text' => $result ? 'Task was updated.' :
+                        'There was an error updating task.'
                 ]);
             } else {
                 //validate fails
